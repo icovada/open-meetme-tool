@@ -1,3 +1,57 @@
-from django.shortcuts import render
+from rest_framework import viewsets, status, mixins
+
+from .models import Event, MeetingRequest, TimeSlot
+from .serializers import EventSerializer, MeetingRequestSerializer, TimeSlotSerializer
 
 # Create your views here.
+class EventApiViewSet(viewsets.ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return EventSerializer
+
+    def get_queryset(self):
+        queryset = None
+        if self.request.version == 'v1':
+            queryset = Event.objects.none()
+
+        return queryset
+
+class MeetingRequestApiViewSet(viewsets.ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return MeetingRequestSerializer
+
+    def get_queryset(self):
+        queryset = None
+        if self.request.version == 'v1':
+            queryset = MeetingRequest.objects.none()
+
+        return queryset
+
+class MeetingInvitationApiViewSet(viewsets.ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return MeetingRequestSerializer
+
+    def get_queryset(self):
+        queryset = None
+        if self.request.version == 'v1':
+            queryset = MeetingRequest.objects.none()
+
+        return queryset
+
+class TimeSlotApiViewSet(viewsets.ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return TimeSlot
+
+    def get_queryset(self):
+        queryset = None
+        if self.request.version == 'v1':
+            queryset = TimeSlotSerializer.objects.none()
+
+        return queryset

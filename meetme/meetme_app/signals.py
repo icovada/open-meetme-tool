@@ -31,7 +31,7 @@ def expand_timeslots_for_existing_event(sender, instance: Event, **kwargs):
     Check Event is valid when changing parameters.
     Create additional TimeSlots if time_slots or concurrencies have increased
 
-    :raises ValidationError: _description_
+    :raises ValidationError: a numeric field was decreased
 
     """
     if kwargs.get('created'):

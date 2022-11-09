@@ -13,10 +13,10 @@ class InvitationStatus(models.TextChoices):
 class Event(models.Model):
     name = models.CharField(max_length=50)
     date = models.DateField()
-    meeting_begins = models.TimeField(editable=False)
-    meeting_duration_mins = models.PositiveIntegerField(editable=False)
-    meeting_time_slots = models.PositiveIntegerField(editable=False)
-    meeting_concurrencies = models.PositiveIntegerField(editable=False)
+    meeting_begins = models.TimeField()
+    meeting_duration_mins = models.PositiveIntegerField()
+    meeting_time_slots = models.PositiveIntegerField()
+    meeting_concurrencies = models.PositiveIntegerField()
 
 
 class UserProfile(models.Model):

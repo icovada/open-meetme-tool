@@ -13,21 +13,26 @@ class Event(models.Model):
     meeting_time_slots = models.PositiveIntegerField()
     meeting_concurrencies = models.PositiveIntegerField()
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company = models.CharField(max_length=30)
     event_participations = models.ManyToManyField(Event)
 
+
 class MeetingRequest(models.Model):
     fkevent = models.ForeignKey(Event, on_delete=models.CASCADE)
-    inviter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invitations_sent")
-    invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invites_received")
+    inviter = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="invitations_sent")
+    invitee = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="invites_received")
     accepted_date = models.DateTimeField(null=True)
     creation_date = models.DateTimeField(default=timezone.now)
-    
+
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['fkevent', 'inviter', 'invitee'], name="one_invite_per_pair_per_event")
+            models.UniqueConstraint(
+                fields=['fkevent', 'inviter', 'invitee'], name="one_invite_per_pair_per_event")
         ]
 
 
@@ -35,9 +40,11 @@ class TimeSlot(models.Model):
     fkevent = models.ForeignKey(Event, on_delete=models.CASCADE)
     time_slot = models.PositiveIntegerField()
     concurrency = models.PositiveIntegerField()
-    booked_meeting = models.OneToOneField(MeetingRequest, on_delete=models.SET_NULL, null=True)
-    
+    booked_meeting = models.OneToOneField(
+        MeetingRequest, on_delete=models.SET_NULL, null=True)
+
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['fkevent', 'time_slot', 'concurrency'], name="one_slot_per_room_per_event")
+            models.UniqueConstraint(
+                fields=['fkevent', 'time_slot', 'concurrency'], name="one_slot_per_room_per_event")
         ]

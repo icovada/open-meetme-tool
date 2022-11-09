@@ -5,6 +5,11 @@ from django.utils import timezone
 
 # Create your models here.
 
+class InvitationStatus(models.TextChoices):
+    ACCEPTED = "ACK", "Accepted"
+    REJECTED = "NAK", "Rejected"
+
+
 class Event(models.Model):
     name = models.CharField(max_length=50)
     date = models.DateField()
@@ -26,8 +31,10 @@ class MeetingRequest(models.Model):
         User, on_delete=models.CASCADE, related_name="invitations_sent")
     invitee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="invites_received")
-    accepted_date = models.DateTimeField(null=True)
     creation_date = models.DateTimeField(default=timezone.now)
+    acknowledge_date = models.DateTimeField(null=True)
+    status = models.CharField(
+        max_length=6, choices=InvitationStatus.choices, null=True)
 
     class Meta:
         permissions = (

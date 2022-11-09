@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'meetme_app'
+    'meetme_app',
+    'rest_framework',
+
 ]
 
 MIDDLEWARE = [

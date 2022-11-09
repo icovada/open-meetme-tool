@@ -4,8 +4,9 @@ from .models import Event, MeetingRequest, TimeSlot
 from .serializers import EventSerializer, MeetingRequestSerializer, TimeSlotSerializer
 
 # Create your views here.
-class EventApiViewSet(viewsets.ModelViewSet):
 
+
+class EventApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':
             return EventSerializer
@@ -13,38 +14,44 @@ class EventApiViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = None
         if self.request.version == 'v1':
-            queryset = Event.objects.none()
+            queryset = Event.objects.all()
 
         return queryset
+
 
 class MeetingRequestApiViewSet(viewsets.ModelViewSet):
-
     def get_serializer_class(self):
         if self.request.version == 'v1':
             return MeetingRequestSerializer
 
     def get_queryset(self):
         queryset = None
+        if self.request.user.is_superuser:
+            return MeetingRequest.objects.all()
+
         if self.request.version == 'v1':
-            queryset = MeetingRequest.objects.none()
+            queryset = MeetingRequest.objects.filter(inviter=self.request.user)
 
         return queryset
+
 
 class MeetingInvitationApiViewSet(viewsets.ModelViewSet):
-
     def get_serializer_class(self):
         if self.request.version == 'v1':
             return MeetingRequestSerializer
 
     def get_queryset(self):
         queryset = None
+        if self.request.user.is_superuser:
+            return MeetingRequest.objects.all()
+
         if self.request.version == 'v1':
-            queryset = MeetingRequest.objects.none()
+            queryset = MeetingRequest.objects.filter(invitee=self.request.user)
 
         return queryset
 
-class TimeSlotApiViewSet(viewsets.ModelViewSet):
 
+class TimeSlotApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':
             return TimeSlot
@@ -52,6 +59,6 @@ class TimeSlotApiViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = None
         if self.request.version == 'v1':
-            queryset = TimeSlotSerializer.objects.none()
+            queryset = TimeSlotSerializer.objects.all()
 
         return queryset

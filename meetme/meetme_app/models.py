@@ -32,9 +32,9 @@ class MeetingRequest(models.Model):
     invitee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="invites_received")
     creation_date = models.DateTimeField(default=timezone.now)
-    acknowledge_date = models.DateTimeField(null=True)
+    acknowledge_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
-        max_length=6, choices=InvitationStatus.choices, null=True)
+        max_length=6, choices=InvitationStatus.choices, null=True, blank=True)
 
     class Meta:
         permissions = (

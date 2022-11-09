@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('inviter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invitations_sent', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'permissions': (('view_sent_invitations', 'View sent invitations'), ('view_received_invitations', 'View received invitations'), ('send_invitation', 'Send invitation'), ('accept_invitation', 'Accept invitation')),
+                'permissions': (('view_sent_invitations', 'Can view sent invitations'), ('view_received_invitations', 'Can view received invitations'), ('send_invitation', 'Can send invitation'), ('accept_invitation', 'Can accept invitation')),
             },
         ),
         migrations.CreateModel(

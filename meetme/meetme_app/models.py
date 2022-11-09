@@ -31,10 +31,10 @@ class MeetingRequest(models.Model):
 
     class Meta:
         permissions = (
-            ("view_sent_invitations", "View sent invitations"),
-            ("view_received_invitations", "View received invitations"),
-            ('send_invitation', "Send invitation"),
-            ('accept_invitation', "Accept invitation")
+            ("view_sent_invitations", "Can view sent invitations"),
+            ("view_received_invitations", "Can view received invitations"),
+            ('send_invitation', "Can end invitation"),
+            ('accept_invitation', "Can accept invitation")
         )
         constraints = [
             models.UniqueConstraint(

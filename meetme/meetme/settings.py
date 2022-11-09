@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-h-%22)w2%xteigaicd$fdek!q+ejy*7-@qs=ty64++7&h$6gly
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'meetme_app'
 ]
 
 MIDDLEWARE = [

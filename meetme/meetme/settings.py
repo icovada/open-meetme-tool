@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'meetme_app',
     'rest_framework',
-
+    'django_filters',
 ]
 
 MIDDLEWARE = [

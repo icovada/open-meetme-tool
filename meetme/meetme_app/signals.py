@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models.signals import post_save, pre_save
+from django.db.models import Q, signals
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
@@ -18,9 +19,9 @@ def create_timeslots_for_new_event(sender, instance: Event, **kwargs):
     for time in range(instance.meeting_time_slots):
         for concurrency in range(instance.meeting_concurrencies):
             slot = Booking(fkevent=instance,
-                            time_slot = time,
-                            concurrency = concurrency)
-            
+                           time_slot=time,
+                           concurrency=concurrency)
+
             slot.save()
 
 
@@ -40,36 +41,47 @@ def expand_timeslots_for_existing_event(sender, instance: Event, **kwargs):
     try:
         old_instance: Event = sender.objects.select_for_update().get(pk=instance.pk)
     except sender.DoesNotExist:
-        pass # Object is new, so field hasn't technically changed, but you may want to do something else here.
+        # Object is new, so field hasn't technically changed, but you may want to do something else here.
+        pass
     else:
         if instance.meeting_time_slots < old_instance.meeting_time_slots:
             raise ValidationError("Cannot reduce amount of time slots")
-        
+
         if instance.meeting_concurrencies < old_instance.meeting_concurrencies:
             raise ValidationError("Cannot reduce amount of time slots")
-
 
         for time in range(instance.meeting_time_slots):
             for concurrency in range(instance.meeting_concurrencies):
                 if time in range(old_instance.meeting_time_slots) and concurrency in range(old_instance.meeting_concurrencies):
                     continue
-                
+
                 slot = Booking(fkevent=instance,
-                                time_slot = time,
-                                concurrency = concurrency)
-                
+                               time_slot=time,
+                               concurrency=concurrency)
+
                 slot.save()
-                
+
+
 @receiver(post_save, sender=MeetingRequest)
 def assign_meeting_to_timeslot_on_accept(sender, instance: MeetingRequest, **kwargs):
     """If event is accepted (accepted_date is not Null), assign to TimeSlot
     if any are available"""
-    
+
     if instance.acknowledge_date is None:
         # Event hasn't been accepted
         return
-    
-    # get time_slots where both users are not available
-    inviter_available = instance.inviter.meeting_request__set.all()
 
-    
+    # get time_slots where both users are not available
+    inviter_bookings = MeetingRequest.objects.filter(
+        Q(Q(inviter=instance.inviter) | Q(invitee=instance.inviter)) & Q(booking__isnull=False))
+    invitee_bookings = MeetingRequest.objects.filter(
+        Q(Q(inviter=instance.invitee) | Q(invitee=instance.invitee)) & Q(booking__isnull=False))
+
+    inviter_busy_time_slots = [x.booking.time_slot for x in inviter_bookings]
+    inviter_busy_time_slots = [x.booking.time_slot for x in invitee_bookings]
+
+    first_available_slot = Booking.objects.filter(Q(Q(booked_meeting__isnull=True) & ~Q(
+        time_slot__in=inviter_busy_time_slots) & ~Q(time_slot__in=inviter_busy_time_slots))).first()
+
+    first_available_slot.booked_meeting = instance
+    first_available_slot.save()

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, mixins
 
-from .models import Event, MeetingRequest, TimeSlot
-from .serializers import EventSerializer, MeetingRequestSerializer, TimeSlotSerializer
+from .models import Event, MeetingRequest, Booking
+from .serializers import EventSerializer, MeetingRequestSerializer, BookingSerializer
 
 # Create your views here.
 
@@ -51,14 +51,14 @@ class MeetingInvitationApiViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class TimeSlotApiViewSet(viewsets.ModelViewSet):
+class BookingApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':
-            return TimeSlot
+            return Booking
 
     def get_queryset(self):
         queryset = None
         if self.request.version == 'v1':
-            queryset = TimeSlotSerializer.objects.all()
+            queryset = Booking.objects.all()
 
         return queryset

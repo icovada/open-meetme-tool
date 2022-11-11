@@ -49,7 +49,7 @@ class MeetingRequest(models.Model):
         ]
 
 
-class TimeSlot(models.Model):
+class Booking(models.Model):
     fkevent = models.ForeignKey(Event, on_delete=models.CASCADE)
     time_slot = models.PositiveIntegerField()
     concurrency = models.PositiveIntegerField()

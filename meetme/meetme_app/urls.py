@@ -5,14 +5,14 @@ from .views import (
     EventApiViewSet,
     MeetingRequestApiViewSet,
     MeetingInvitationApiViewSet,
-    TimeSlotApiViewSet
+    BookingApiViewSet
 )
 
 router = routers.DefaultRouter()
 router.register(r'event', EventApiViewSet, basename="Customer")
 router.register(r'meetingrequest', MeetingRequestApiViewSet, basename="Host")
 router.register(r'meetinginvitation', MeetingInvitationApiViewSet, basename="Service")
-router.register(r'timeslot', TimeSlotApiViewSet, basename="Event")
+router.register(r'booking', BookingApiViewSet, basename="Event")
 
 app_name = "meetme_app"
 

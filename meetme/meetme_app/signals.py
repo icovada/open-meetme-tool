@@ -3,11 +3,11 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
-from meetme_app.models import Event, TimeSlot
+from meetme_app.models import Event, Booking, MeetingRequest
 
 
 @receiver(post_save, sender=Event)
-def create_timeslots_for_new_event(sender: Event, instance, **kwargs):
+def create_timeslots_for_new_event(sender, instance: Event, **kwargs):
     '''
     Create TimeSlots as per Event details
     '''
@@ -17,7 +17,7 @@ def create_timeslots_for_new_event(sender: Event, instance, **kwargs):
 
     for time in range(instance.meeting_time_slots):
         for concurrency in range(instance.meeting_concurrencies):
-            slot = TimeSlot(fkevent=instance,
+            slot = Booking(fkevent=instance,
                             time_slot = time,
                             concurrency = concurrency)
             
@@ -54,8 +54,22 @@ def expand_timeslots_for_existing_event(sender, instance: Event, **kwargs):
                 if time in range(old_instance.meeting_time_slots) and concurrency in range(old_instance.meeting_concurrencies):
                     continue
                 
-                slot = TimeSlot(fkevent=instance,
+                slot = Booking(fkevent=instance,
                                 time_slot = time,
                                 concurrency = concurrency)
                 
                 slot.save()
+                
+@receiver(post_save, sender=MeetingRequest)
+def assign_meeting_to_timeslot_on_accept(sender, instance: MeetingRequest, **kwargs):
+    """If event is accepted (accepted_date is not Null), assign to TimeSlot
+    if any are available"""
+    
+    if instance.acknowledge_date is None:
+        # Event hasn't been accepted
+        return
+    
+    # get time_slots where both users are not available
+    inviter_available = instance.inviter.meeting_request__set.all()
+
+    

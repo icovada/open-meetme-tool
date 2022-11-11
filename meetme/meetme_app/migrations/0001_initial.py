@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name='MeetingRequest',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('accepted_date', models.DateTimeField(null=True)),
+                ('acknowledge_date', models.DateTimeField(null=True)),
                 ('creation_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('fkevent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='meetme_app.event')),
                 ('invitee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invites_received', to=settings.AUTH_USER_MODEL)),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='TimeSlot',
+            name='Booking',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('time_slot', models.PositiveIntegerField()),
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddConstraint(
-            model_name='timeslot',
+            model_name='booking',
             constraint=models.UniqueConstraint(fields=('fkevent', 'time_slot', 'concurrency'), name='one_slot_per_room_per_event'),
         ),
         migrations.AddConstraint(

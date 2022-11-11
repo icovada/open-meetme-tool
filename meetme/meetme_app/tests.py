@@ -4,7 +4,7 @@ from django import setup
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from .models import Event, MeetingRequest, TimeSlot
+from .models import Event, MeetingRequest, Booking
 # Create your tests here.
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -31,13 +31,13 @@ class TestEventSetup(TestCase):
         Check the appropriate amount of TimeSlots is created
         """
 
-        self.assertEqual(len(TimeSlot.objects.all()), 4)
+        self.assertEqual(len(Booking.objects.all()), 4)
 
         self.e.meeting_time_slots = 4
         self.e.meeting_concurrencies = 4
         self.e.save()
 
-        self.assertEqual(len(TimeSlot.objects.all()), 16)
+        self.assertEqual(len(Booking.objects.all()), 16)
 
     def test_event_shrinkage_fails(self):
         """

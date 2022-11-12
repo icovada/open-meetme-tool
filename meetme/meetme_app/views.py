@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status, mixins
 from django.shortcuts import render
-
+from django.contrib.auth.models import AnonymousUser
 
 from .models import Event, MeetingRequest, Booking
 from .serializers import EventSerializer, MeetingRequestSerializer, BookingSerializer
@@ -12,10 +12,10 @@ def home_view(request):
     events = Event.objects.all()
     context['events'] = events
     
-    if request.user is not None:
-        user_events = request.user.event_set.all()
-    else:
+    if isinstance(request.user, AnonymousUser):
         user_events = Event.objects.none()
+    else:
+        user_events = request.user.event_set.all()
 
     context['user_events'] = user_events
     return render(request, "meetme_app/index.html", context=context)

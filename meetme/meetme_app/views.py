@@ -8,7 +8,10 @@ from .serializers import EventSerializer, MeetingRequestSerializer, BookingSeria
 # Create your views here.
 
 def home_view(request):
-    return render(request, "meetme_app/index.html")
+    context = {}
+    events = Event.objects.all()
+    context['events'] = events
+    return render(request, "meetme_app/index.html", context=context)
 
 
 class EventApiViewSet(viewsets.ModelViewSet):

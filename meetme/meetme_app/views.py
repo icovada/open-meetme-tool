@@ -9,7 +9,7 @@ from .serializers import EventSerializer, MeetingRequestSerializer, BookingSeria
 
 def home_view(request):
     context = {}
-    events = Event.objects.all()
+    events = Event.objects.all().order_by('date')
     context['events'] = events
     
     if isinstance(request.user, AnonymousUser):

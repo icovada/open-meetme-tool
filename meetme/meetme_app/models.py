@@ -17,6 +17,7 @@ class Event(models.Model):
     meeting_duration_mins = models.PositiveIntegerField()
     meeting_time_slots = models.PositiveIntegerField()
     meeting_concurrencies = models.PositiveIntegerField()
+    registered_users = models.ManyToManyField(User)
 
 
 class UserProfile(models.Model):

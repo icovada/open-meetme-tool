@@ -29,15 +29,10 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/meeting_requests">Meeting requests</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/my_schedule">My Schedule</a>
-          </li>
+        <ul class="navbar-nav mx-auto">
+          {% block navbarcenter %}{% endblock %}
         </ul>
-        <ul class="navbar-nav me-right mb-2 mb-md-0">
+        <ul class="navbar-nav mx-end">
           {% if user.is_authenticated %}
           <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">{{user}}</button>
           <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static">

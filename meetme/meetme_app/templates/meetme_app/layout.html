@@ -38,10 +38,14 @@
           </li>
         </ul>
         <ul class="navbar-nav me-right mb-2 mb-md-0">
+          {% if user.is_authenticated %}
           <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">{{user}}</button>
           <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static">
             <a class="dropdown-item" href="/logout">Logout</a>
           </ul>
+          {% else %}
+          <a class="btn btn-link nav-link" type="button" href="/login">Login</a>
+          {% endif %}
         </ul>
       </div>
     </div>

@@ -116,6 +116,52 @@ class TestBooking(TestCase):
         
         return invite
 
+    def fill_concurrency_0(self):
+        """
+        imp = important_user
+        Final goal: set event schedule like this
+        
+        +------+-------------+--------------+
+        | Slot | Concurr0    | Concurr1     |
+        +======+=============+==============+
+        | 0    | imp-user1   |              |
+        +------+-------------+--------------+
+        | 1    | imp-user2   |              |
+        +------+-------------+--------------+
+        | 2    | user3-user2 |              |
+        +------+-------------+--------------+
+        | 3    | imp-user3   |              |
+        +------+-------------+--------------+
+        | 4    | imp-user4   |              |
+        +------+-------------+--------------+
+        """
+        
+        self.e.meeting_concurrencies=2
+        self.e.meeting_time_slots=5
+        self.e.save()
+        
+        slot00 = self.generate_accepted_meeting_in_slot(self.e, self.user1, self.important_user, 0, 0)
+        slot01 = self.generate_accepted_meeting_in_slot(self.e, self.user2, self.important_user, 0, 1)
+        slot02 = self.generate_accepted_meeting_in_slot(self.e, self.user3, self.user2, 0, 2)
+        slot03 = self.generate_accepted_meeting_in_slot(self.e, self.important_user, self.user3, 0, 3)
+        slot04 = self.generate_accepted_meeting_in_slot(self.e, self.important_user, self.user4, 0, 4)
+
+        self.assertEqual(slot00.booking.concurrency, 0)
+        self.assertEqual(slot00.booking.time_slot, 0)
+
+        self.assertEqual(slot01.booking.concurrency, 0)
+        self.assertEqual(slot01.booking.time_slot, 1)
+
+        self.assertEqual(slot02.booking.concurrency, 0)
+        self.assertEqual(slot02.booking.time_slot, 2)
+
+        self.assertEqual(slot03.booking.concurrency, 0)
+        self.assertEqual(slot03.booking.time_slot, 3)
+
+        self.assertEqual(slot04.booking.concurrency, 0)
+        self.assertEqual(slot04.booking.time_slot, 4)
+
+
     def test_fill_bookings(self):
         invite1 = MeetingRequest(
             fkevent=self.e,
@@ -166,30 +212,7 @@ class TestBooking(TestCase):
         +------+-------------+--------------+
         """
         
-        self.e.meeting_concurrencies=2
-        self.e.meeting_time_slots=5
-        self.e.save()
-        
-        slot00 = self.generate_accepted_meeting_in_slot(self.e, self.user1, self.important_user, 0, 0)
-        slot01 = self.generate_accepted_meeting_in_slot(self.e, self.user2, self.important_user, 0, 1)
-        slot02 = self.generate_accepted_meeting_in_slot(self.e, self.user3, self.user2, 0, 2)
-        slot03 = self.generate_accepted_meeting_in_slot(self.e, self.important_user, self.user3, 0, 3)
-        slot04 = self.generate_accepted_meeting_in_slot(self.e, self.important_user, self.user4, 0, 4)
-
-        self.assertEqual(slot00.booking.concurrency, 0)
-        self.assertEqual(slot00.booking.time_slot, 0)
-
-        self.assertEqual(slot01.booking.concurrency, 0)
-        self.assertEqual(slot01.booking.time_slot, 1)
-
-        self.assertEqual(slot02.booking.concurrency, 0)
-        self.assertEqual(slot02.booking.time_slot, 2)
-
-        self.assertEqual(slot03.booking.concurrency, 0)
-        self.assertEqual(slot03.booking.time_slot, 3)
-
-        self.assertEqual(slot04.booking.concurrency, 0)
-        self.assertEqual(slot04.booking.time_slot, 4)
+        self.fill_concurrency_0()
 
         slot12 = self.generate_accepted_meeting(self.e, self.test_user, self.important_user)
 

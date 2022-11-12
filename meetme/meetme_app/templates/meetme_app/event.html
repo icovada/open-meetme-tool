@@ -9,8 +9,8 @@
     <div class="bg-light p-5 my-3 rounded">
       <h1>Your schedule</h1>
       <div id="mycalendar" class="d-flex flex-column mb-3">
-        {% for x in time_slots %}
-        <div class="p-2 border">Slot1</div>
+        {% for k, v in calendar.items %}
+        <div class="p-2 border">{{v.begin | time}} - {{v.meeting}}</div>
         {% endfor %}
       </div>
 

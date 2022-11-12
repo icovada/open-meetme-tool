@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status, mixins
+from datetime import timedelta
 from django.shortcuts import render
 from django.contrib.auth.models import AnonymousUser
 
@@ -9,7 +10,7 @@ from .serializers import EventSerializer, MeetingRequestSerializer, BookingSeria
 
 def home_view(request):
     context = {}
-    events = Event.objects.all().order_by('date')
+    events = Event.objects.all().order_by('datetime')
     context['events'] = events
     
     if isinstance(request.user, AnonymousUser):
@@ -29,8 +30,25 @@ def event_view(request, slug):
     context["event"] = event
     
     # Becasue doing it inside the template is a pain
-    slots_range = range(event.meeting_time_slots)
-    context['time_slots'] = slots_range
+    base_time = event.datetime
+    duration = timedelta(minutes=event.meeting_duration_mins)
+
+    user_booking_dict = {}
+    
+    for x in request.user.invitations_sent.filter(booking__isnull=False):
+        user_booking_dict[x.booking.time_slot] = x
+    
+    for x in request.user.invites_received.filter(booking__isnull=False):
+        user_booking_dict[x.booking.time_slot] = x
+
+    calendar = {}
+    for x in range(event.meeting_time_slots):
+        calendar[x] = {
+            "begin": base_time+duration*x,
+            "meeting": user_booking_dict.get(x)
+        }
+
+    context["calendar"] = calendar    
     return render(request, "meetme_app/event.html", context=context)
     
 

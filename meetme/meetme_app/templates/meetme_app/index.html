@@ -15,9 +15,9 @@
         </div>
         <div class="ms-auto align-self-center">
           {% if event in user_events %}
-            <a type="button" class="btn btn-success d-flex align-self-center" href="/event/{{event.name}}">Go to event page</a>
+            <a type="button" class="btn btn-success d-flex align-self-center" href="/event/{{event.slug}}">Go to event page</a>
           {% else %}
-            <a type="button" class="btn btn-primary d-flex align-self-center" href="/event/{{event.name}}/register">Register</a>
+            <a type="button" class="btn btn-primary d-flex align-self-center" href="/event/{{event.slug}}/register">Register</a>
           {% endif %}
         </div>
 

@@ -23,6 +23,11 @@ def home_view(request):
 def login_view(request):
     return render(request, "meetme_app/login.html")
 
+def event_view(request, slug):
+    event = Event.objects.get(slug=slug)
+    return render(request, "meetme_app/event.html", context={"event": event})
+    
+
 class EventApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':

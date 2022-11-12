@@ -1,10 +1,31 @@
 from django.db import transaction
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.models import Q, signals
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
-from meetme_app.models import Event, Booking, MeetingRequest
+from meetme_app.models import Event, Booking, MeetingRequest, InvitationStatus
+
+
+def find_booking_per_meetingrequest(instance):
+    # get time_slots where both users are not available
+    inviter_bookings = MeetingRequest.objects.filter(
+        Q(Q(inviter=instance.inviter) | Q(invitee=instance.inviter)) & Q(booking__isnull=False))
+    invitee_bookings = MeetingRequest.objects.filter(
+        Q(Q(inviter=instance.invitee) | Q(invitee=instance.invitee)) & Q(booking__isnull=False))
+
+    inviter_busy_time_slots = [x.booking.time_slot for x in inviter_bookings]
+    inviter_busy_time_slots = [x.booking.time_slot for x in invitee_bookings]
+
+    first_available_slot = Booking.objects.filter(Q(Q(booked_meeting__isnull=True) & ~Q(
+        time_slot__in=inviter_busy_time_slots) & ~Q(time_slot__in=inviter_busy_time_slots))).first()
+
+    if first_available_slot is None:
+        # Can't find a slot
+        return
+
+    first_available_slot.booked_meeting = instance
+    first_available_slot.save()
 
 
 @receiver(post_save, sender=Event)
@@ -63,25 +84,30 @@ def expand_timeslots_for_existing_event(sender, instance: Event, **kwargs):
 
 
 @receiver(post_save, sender=MeetingRequest)
-def assign_meeting_to_timeslot_on_accept(sender, instance: MeetingRequest, **kwargs):
+def assign_meeting_to_timeslot_on_save(sender, instance: MeetingRequest, **kwargs):
     """If event is accepted (accepted_date is not Null), assign to TimeSlot
     if any are available"""
 
-    if instance.acknowledge_date is None:
+    if instance.status != InvitationStatus.ACCEPTED:
         # Event hasn't been accepted
         return
+    
+    find_booking_per_meetingrequest(instance)
 
-    # get time_slots where both users are not available
-    inviter_bookings = MeetingRequest.objects.filter(
-        Q(Q(inviter=instance.inviter) | Q(invitee=instance.inviter)) & Q(booking__isnull=False))
-    invitee_bookings = MeetingRequest.objects.filter(
-        Q(Q(inviter=instance.invitee) | Q(invitee=instance.invitee)) & Q(booking__isnull=False))
 
-    inviter_busy_time_slots = [x.booking.time_slot for x in inviter_bookings]
-    inviter_busy_time_slots = [x.booking.time_slot for x in invitee_bookings]
 
-    first_available_slot = Booking.objects.filter(Q(Q(booked_meeting__isnull=True) & ~Q(
-        time_slot__in=inviter_busy_time_slots) & ~Q(time_slot__in=inviter_busy_time_slots))).first()
-
-    first_available_slot.booked_meeting = instance
-    first_available_slot.save()
+@receiver(post_delete, sender=MeetingRequest)
+def fill_available_slots_in_same_event(sender, instance:MeetingRequest, **kwargs):
+    """
+    If an event is removed there might be a Booking that just freed up
+    Fill them up in order of MeetingRequest creation
+    """
+    
+    # Get all accepted MeetingRequests that still have no Booking, per event
+    event = instance.fkevent
+    
+    pending_requests = MeetingRequest.objects.filter(Q(Q(fkevent=event) & Q(booking__isnull=True) & Q(status=InvitationStatus.ACCEPTED))).order_by('creation_date')
+    
+    for x in pending_requests:
+        find_booking_per_meetingrequest(x)
+        

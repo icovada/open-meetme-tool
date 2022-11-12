@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 
 from .models import Event, MeetingRequest, Booking, InvitationStatus
-from .signals import assign_meeting_to_timeslot_on_accept
+from .signals import assign_meeting_to_timeslot_on_save
 # Create your tests here.
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -104,7 +104,7 @@ class TestBooking(TestCase):
     
     def generate_accepted_meeting_in_slot(self, event: Event, inviter: User, invitee: User, concurrency: int, time_slot: int) -> MeetingRequest:
         # Disconnect signal first or it won't go where we want it to
-        signals.post_save.disconnect(assign_meeting_to_timeslot_on_accept, sender=MeetingRequest)
+        signals.post_save.disconnect(assign_meeting_to_timeslot_on_save, sender=MeetingRequest)
 
         invite = self.generate_accepted_meeting(event, inviter, invitee)
         booking = Booking.objects.get(concurrency=concurrency, time_slot=time_slot)
@@ -112,7 +112,7 @@ class TestBooking(TestCase):
         booking.save()
         
         # Restore signal
-        signals.post_save.connect(assign_meeting_to_timeslot_on_accept, sender=MeetingRequest)
+        signals.post_save.connect(assign_meeting_to_timeslot_on_save, sender=MeetingRequest)
         
         return invite
 
@@ -218,3 +218,45 @@ class TestBooking(TestCase):
 
         self.assertEqual(slot12.booking.concurrency, 1)
         self.assertEqual(slot12.booking.time_slot, 2)
+
+
+    def test_book_slot_upon_deletion(self):
+        """
+        +------+-------------+-----------+
+        | Slot | Concurr0    | Concurr1  |
+        +======+=============+===========+
+        | 0    | imp-user1   |           |
+        +------+-------------+-----------+
+        | 1    | imp-user2   |           |
+        +------+-------------+-----------+
+        | 2    | user3-user2 | imp-user5 |
+        +------+-------------+-----------+
+        | 3    | imp-user3   |           |
+        +------+-------------+-----------+
+        | 4    | imp-user4   |           |
+        +------+-------------+-----------+
+        
+        important_user is VERY important.
+        So important that testuser wants to meet him as well, but important_user
+        is already fully booked.
+        
+        Luckily, user5 cannot participate and cancels the meeting.
+        test_user should get an automatic booking
+        """
+        
+        self.fill_concurrency_0()
+
+        slot12 = self.generate_accepted_meeting_in_slot(self.e, self.user5, self.important_user, 1, 2)
+
+        self.assertEqual(slot12.booking.concurrency, 1)
+        self.assertEqual(slot12.booking.time_slot, 2)
+
+        pending = self.generate_accepted_meeting(self.e, self.test_user, self.important_user)
+        
+        self.assertFalse(hasattr(pending, "booking"))
+        
+        slot12.delete()
+        
+        pending.refresh_from_db()
+        self.assertEqual(pending.booking.concurrency, 1)
+        self.assertEqual(pending.booking.time_slot, 2)

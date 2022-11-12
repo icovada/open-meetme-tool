@@ -142,3 +142,9 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%d/%m/%y %H:%M:%S',
     'SHORT_DATETIME_FORMAT': '%d/%m/%y %H:%M:%S'
 }
+
+# login protected views redirect unauthenticated users to the LOGIN_URL destination.
+# "login" is a string defined in config/urls.py
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

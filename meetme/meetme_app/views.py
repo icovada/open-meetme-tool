@@ -13,6 +13,8 @@ def home_view(request):
     context['events'] = events
     return render(request, "meetme_app/index.html", context=context)
 
+def login_view(request):
+    return render(request, "meetme_app/login.html")
 
 class EventApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):

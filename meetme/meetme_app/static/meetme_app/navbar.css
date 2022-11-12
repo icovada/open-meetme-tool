@@ -10,3 +10,24 @@ body {
 .bg-light{
   background-color: #EEEEEE;
 }
+
+.calendar-time{
+  width: 15%;
+}
+
+.calendar-meeting{
+  width: 85%;
+
+}
+
+.calendar-meeting.booked{
+  border: 3px solid #8c00ff !important;
+  border-radius: 3px;
+  background-color: #b04fff;
+  color: white;
+  padding-left: 1em;
+}
+
+.calendar-meeting.booked > p{
+  margin-bottom: 0px;
+}

@@ -9,10 +9,22 @@
     <div class="bg-light p-5 my-3 rounded">
       <h1>Your schedule</h1>
       <div id="mycalendar" class="d-flex flex-column mb-3">
+
         {% for k, v in calendar.items %}
-        <div class="p-2 border">{{v.begin | time}} - {{v.meeting}}</div>
+          <div class="d-flex border">
+            <div class="p-3 calendar-time">{{v.begin | time}}</div>
+            {% if v.meeting is None %}
+              <div class="py-3 calendar-meeting text-muted">No meetings</div>
+            {% else %}
+              <div class="calendar-meeting booked">
+                <p class="fw-bold">{{v.meeting.inviter}} - {{v.meeting.invitee}}</p>
+                <p>Room {{v.meeting.booking.concurrency}}</p>
+              </div>
+            {% endif %}
+          </div>
         {% endfor %}
-      </div>
+
+    </div>
 
     </div>
   </main>

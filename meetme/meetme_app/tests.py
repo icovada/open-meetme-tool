@@ -1,5 +1,5 @@
 import os
-from datetime import date, time, datetime
+from datetime import datetime
 from django import setup
 from django.test import TestCase
 from django.core.exceptions import ValidationError
@@ -19,8 +19,7 @@ class TestEventSetup(TestCase):
     def setUpTestData(cls):
         cls.e = Event(
             name="ciao",
-            date=date.today(),
-            meeting_begins=time(12, 0),
+            datetime=datetime.now(),
             meeting_duration_mins=30,
             meeting_time_slots=2,
             meeting_concurrencies=2
@@ -57,8 +56,7 @@ class TestBooking(TestCase):
     def setUpTestData(cls):
         cls.e = Event(
             name="ciao",
-            date=date.today(),
-            meeting_begins=time(12, 0),
+            datetime=datetime.now(),
             meeting_duration_mins=30,
             meeting_time_slots=2,
             meeting_concurrencies=1

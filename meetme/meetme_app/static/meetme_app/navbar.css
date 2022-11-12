@@ -1,7 +1,12 @@
 body {
   padding-bottom: 20px;
+  background-color: #393E46;
 }
 
 .navbar {
   margin-bottom: 20px;
+}
+
+.bg-light{
+  background-color: #EEEEEE;
 }

@@ -11,6 +11,13 @@ def home_view(request):
     context = {}
     events = Event.objects.all()
     context['events'] = events
+    
+    if request.user is not None:
+        user_events = request.user.event_set.all()
+    else:
+        user_events = Event.objects.none()
+
+    context['user_events'] = user_events
     return render(request, "meetme_app/index.html", context=context)
 
 def login_view(request):

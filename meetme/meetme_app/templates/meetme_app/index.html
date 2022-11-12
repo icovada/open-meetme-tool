@@ -10,11 +10,15 @@
     <div class="card p-2 m-3">
       <div class="card-body d-flex">
         <div class="me-auto">
-          <a class="h3 card-title" href="/event/{{event.name}}">{{event.name}}</a>
+          <h3 class="card-title">{{event.name}}</h3>
           <p class="card-text">{{event.date}}</p>
         </div>
         <div class="ms-auto align-self-center">
-          <button type="button" class="btn btn-success d-flex align-self-center">Register</button>
+          {% if event in user_events %}
+            <a type="button" class="btn btn-success d-flex align-self-center" href="/event/{{event.name}}">Go to event page</a>
+          {% else %}
+            <a type="button" class="btn btn-primary d-flex align-self-center" href="/event/{{event.name}}/register">Register</a>
+          {% endif %}
         </div>
 
       </div>

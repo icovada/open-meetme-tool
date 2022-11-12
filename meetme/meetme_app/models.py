@@ -13,9 +13,8 @@ class InvitationStatus(models.TextChoices):
 class Event(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(primary_key=True)
-    date = models.DateField()
+    datetime = models.DateTimeField()
     address = models.TextField()
-    meeting_begins = models.TimeField()
     meeting_duration_mins = models.PositiveIntegerField()
     meeting_time_slots = models.PositiveIntegerField()
     meeting_concurrencies = models.PositiveIntegerField()

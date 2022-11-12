@@ -1,9 +1,14 @@
 from rest_framework import viewsets, status, mixins
+from django.shortcuts import render
+
 
 from .models import Event, MeetingRequest, Booking
 from .serializers import EventSerializer, MeetingRequestSerializer, BookingSerializer
 
 # Create your views here.
+
+def home_view(request):
+    return render(request, "meetme_app/index.html")
 
 
 class EventApiViewSet(viewsets.ModelViewSet):

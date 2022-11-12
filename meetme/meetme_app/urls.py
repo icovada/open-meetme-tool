@@ -5,7 +5,8 @@ from .views import (
     EventApiViewSet,
     MeetingRequestApiViewSet,
     MeetingInvitationApiViewSet,
-    BookingApiViewSet
+    BookingApiViewSet,
+    home_view
 )
 
 router = routers.DefaultRouter()
@@ -18,5 +19,6 @@ app_name = "meetme_app"
 
 urlpatterns = [
     # main view
+    path("", home_view),
     re_path(r'api/(?P<version>v\d)/', include(router.urls))
 ]

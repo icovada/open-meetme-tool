@@ -54,12 +54,12 @@
       <h2>Available events</h2>
       {% for event in events %}
       <div class="card">
-        <div class="card-body">
-          <div class="float-start">
+        <div class="card-body d-flex">
+          <div class="me-auto">
             <h3 class="card-title">{{event.name}}</h3>
             <p class="card-text">{{event.date}}</p>
           </div>
-          <div class="float-end">
+          <div class="ms-auto align-self-center">
             <button type="button" class="btn btn-success d-flex align-self-center">Register</button>
           </div>
 

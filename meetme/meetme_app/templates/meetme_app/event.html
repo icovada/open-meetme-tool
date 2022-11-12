@@ -2,8 +2,18 @@
 
 {% block body %}
 <main class="container">
-    <div class="bg-light p-5 rounded">
+    <div class="bg-light p-5 my-3 rounded">
       <h1>{{event.name}}</h1>
+      <p class="lead">{{event.address}} - {{event.date}}</p>
+    </div>
+    <div class="bg-light p-5 my-3 rounded">
+      <h1>Your schedule</h1>
+      <div id="mycalendar" class="d-flex flex-column mb-3">
+        {% for x in time_slots %}
+        <div class="p-2 border">Slot1</div>
+        {% endfor %}
+      </div>
+
     </div>
   </main>
 {% endblock %}

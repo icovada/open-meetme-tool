@@ -24,8 +24,14 @@ def login_view(request):
     return render(request, "meetme_app/login.html")
 
 def event_view(request, slug):
+    context = {}
     event = Event.objects.get(slug=slug)
-    return render(request, "meetme_app/event.html", context={"event": event})
+    context["event"] = event
+    
+    # Becasue doing it inside the template is a pain
+    slots_range = range(event.meeting_time_slots)
+    context['time_slots'] = slots_range
+    return render(request, "meetme_app/event.html", context=context)
     
 
 class EventApiViewSet(viewsets.ModelViewSet):

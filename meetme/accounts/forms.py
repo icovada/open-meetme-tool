@@ -10,5 +10,6 @@ class SimpleSignupForm(SignupForm):
     def save(self, request):
         user = super(SimpleSignupForm, self).save(request)
         user.company = self.cleaned_data['company']
+        user.username = self.cleaned_data['email']
         user.save()
         return user

@@ -20,20 +20,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path("", include("meetme_app.urls", namespace="metamonitor")),
-    path(
-        "login/",
-        auth_views.LoginView.as_view(
-            template_name="meetme_app/login.html",
-        ),
-        name="login",
-    ),
-    path(
-        "logout/",
-        auth_views.LogoutView.as_view(
-            template_name="meetme_app/logout.html"
-        ),
-        name="logout",
-    ),
 
 ]

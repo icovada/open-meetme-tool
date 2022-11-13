@@ -7,7 +7,6 @@ from .views import (
     MeetingInvitationApiViewSet,
     BookingApiViewSet,
     home_view,
-    login_view,
     event_view,
 )
 
@@ -22,7 +21,6 @@ app_name = "meetme_app"
 urlpatterns = [
     # main view
     path("", home_view),
-    path("login", login_view),
     path('event/<slug:slug>/', event_view),
     re_path(r'api/(?P<version>v\d)/', include(router.urls))
 ]

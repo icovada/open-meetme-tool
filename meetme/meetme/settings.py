@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'meetme_app',
+    'accounts',
     'rest_framework',
     'django_filters',
     'allauth',
@@ -159,3 +160,4 @@ REST_FRAMEWORK = {
 LOGIN_URL = "/accounts/login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+AUTH_USER_MODEL = 'accounts.CustomUser'

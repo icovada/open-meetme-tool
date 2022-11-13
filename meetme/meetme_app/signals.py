@@ -4,14 +4,14 @@ from django.db.models import Q, signals
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
-from meetme_app.models import Event, Booking, MeetingRequest, InvitationStatus
+from meetme_app.models import Event, Booking, Invite, InvitationStatus
 
 
-def find_booking_per_meetingrequest(instance):
+def find_booking_per_invite(instance):
     # get time_slots where both users are not available
-    inviter_bookings = MeetingRequest.objects.filter(
+    inviter_bookings = Invite.objects.filter(
         Q(Q(inviter=instance.inviter) | Q(invitee=instance.inviter)) & Q(booking__isnull=False))
-    invitee_bookings = MeetingRequest.objects.filter(
+    invitee_bookings = Invite.objects.filter(
         Q(Q(inviter=instance.invitee) | Q(invitee=instance.invitee)) & Q(booking__isnull=False))
 
     inviter_busy_time_slots = [x.booking.time_slot for x in inviter_bookings]
@@ -83,8 +83,8 @@ def expand_timeslots_for_existing_event(sender, instance: Event, **kwargs):
                 slot.save()
 
 
-@receiver(post_save, sender=MeetingRequest)
-def assign_meeting_to_timeslot_on_save(sender, instance: MeetingRequest, **kwargs):
+@receiver(post_save, sender=Invite)
+def assign_meeting_to_timeslot_on_save(sender, instance: Invite, **kwargs):
     """If event is accepted (accepted_date is not Null), assign to TimeSlot
     if any are available"""
 
@@ -92,22 +92,22 @@ def assign_meeting_to_timeslot_on_save(sender, instance: MeetingRequest, **kwarg
         # Event hasn't been accepted
         return
     
-    find_booking_per_meetingrequest(instance)
+    find_booking_per_invite(instance)
 
 
 
-@receiver(post_delete, sender=MeetingRequest)
-def fill_available_slots_in_same_event(sender, instance:MeetingRequest, **kwargs):
+@receiver(post_delete, sender=Invite)
+def fill_available_slots_in_same_event(sender, instance:Invite, **kwargs):
     """
     If an event is removed there might be a Booking that just freed up
-    Fill them up in order of MeetingRequest creation
+    Fill them up in order of Invite creation
     """
     
-    # Get all accepted MeetingRequests that still have no Booking, per event
+    # Get all accepted Invites that still have no Booking, per event
     event = instance.fkevent
     
-    pending_requests = MeetingRequest.objects.filter(Q(Q(fkevent=event) & Q(booking__isnull=True) & Q(status=InvitationStatus.ACCEPTED))).order_by('creation_date')
+    pending_requests = Invite.objects.filter(Q(Q(fkevent=event) & Q(booking__isnull=True) & Q(status=InvitationStatus.ACCEPTED))).order_by('creation_date')
     
     for x in pending_requests:
-        find_booking_per_meetingrequest(x)
+        find_booking_per_invite(x)
         

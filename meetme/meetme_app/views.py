@@ -3,8 +3,8 @@ from datetime import timedelta
 from django.shortcuts import render
 from django.contrib.auth.models import AnonymousUser
 
-from .models import Event, MeetingRequest, Booking
-from .serializers import EventSerializer, MeetingRequestSerializer, BookingSerializer
+from .models import Event, Invite, Booking
+from .serializers import EventSerializer, InviteSerializer, BookingSerializer
 
 # Create your views here.
 
@@ -65,18 +65,18 @@ class EventApiViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class MeetingRequestApiViewSet(viewsets.ModelViewSet):
+class InviteApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':
-            return MeetingRequestSerializer
+            return InviteSerializer
 
     def get_queryset(self):
         queryset = None
         if self.request.user.is_superuser:
-            return MeetingRequest.objects.all()
+            return Invite.objects.all()
 
         if self.request.version == 'v1':
-            queryset = MeetingRequest.objects.filter(inviter=self.request.user)
+            queryset = Invite.objects.filter(inviter=self.request.user)
 
         return queryset
 
@@ -84,15 +84,15 @@ class MeetingRequestApiViewSet(viewsets.ModelViewSet):
 class MeetingInvitationApiViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.version == 'v1':
-            return MeetingRequestSerializer
+            return InviteSerializer
 
     def get_queryset(self):
         queryset = None
         if self.request.user.is_superuser:
-            return MeetingRequest.objects.all()
+            return Invite.objects.all()
 
         if self.request.version == 'v1':
-            queryset = MeetingRequest.objects.filter(invitee=self.request.user)
+            queryset = Invite.objects.filter(invitee=self.request.user)
 
         return queryset
 

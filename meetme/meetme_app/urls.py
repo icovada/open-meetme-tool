@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from .views import (
     EventApiViewSet,
-    MeetingRequestApiViewSet,
+    InviteApiViewSet,
     MeetingInvitationApiViewSet,
     BookingApiViewSet,
     home_view,
@@ -12,7 +12,7 @@ from .views import (
 
 router = routers.DefaultRouter()
 router.register(r'event', EventApiViewSet, basename="Customer")
-router.register(r'meetingrequest', MeetingRequestApiViewSet, basename="Host")
+router.register(r'invite', InviteApiViewSet, basename="Host")
 router.register(r'meetinginvitation', MeetingInvitationApiViewSet, basename="Service")
 router.register(r'booking', BookingApiViewSet, basename="Event")
 

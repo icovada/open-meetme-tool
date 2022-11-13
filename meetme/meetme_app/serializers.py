@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Event, MeetingRequest, Booking
+from .models import Event, Invite, Booking
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -10,9 +10,9 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MeetingRequestSerializer(serializers.ModelSerializer):
+class InviteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MeetingRequest
+        model = Invite
         fields = '__all__'
 
 

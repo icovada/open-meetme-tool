@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.db.models import signals
 
-from .models import Event, MeetingRequest, Booking, InvitationStatus
+from .models import Event, Invite, Booking, InvitationStatus
 from .signals import assign_meeting_to_timeslot_on_save
 # Create your tests here.
 
@@ -88,8 +88,8 @@ class TestBooking(TestCase):
         cls.user4.save()
         cls.user5.save()
         
-    def generate_accepted_meeting(self, event: Event, inviter: User, invitee: User) -> MeetingRequest:
-        invite = MeetingRequest(
+    def generate_accepted_meeting(self, event: Event, inviter: User, invitee: User) -> Invite:
+        invite = Invite(
             fkevent=event,
             inviter=inviter,
             invitee=invitee,
@@ -100,9 +100,9 @@ class TestBooking(TestCase):
         invite.save()
         return invite
     
-    def generate_accepted_meeting_in_slot(self, event: Event, inviter: User, invitee: User, concurrency: int, time_slot: int) -> MeetingRequest:
+    def generate_accepted_meeting_in_slot(self, event: Event, inviter: User, invitee: User, concurrency: int, time_slot: int) -> Invite:
         # Disconnect signal first or it won't go where we want it to
-        signals.post_save.disconnect(assign_meeting_to_timeslot_on_save, sender=MeetingRequest)
+        signals.post_save.disconnect(assign_meeting_to_timeslot_on_save, sender=Invite)
 
         invite = self.generate_accepted_meeting(event, inviter, invitee)
         booking = Booking.objects.get(concurrency=concurrency, time_slot=time_slot)
@@ -110,7 +110,7 @@ class TestBooking(TestCase):
         booking.save()
         
         # Restore signal
-        signals.post_save.connect(assign_meeting_to_timeslot_on_save, sender=MeetingRequest)
+        signals.post_save.connect(assign_meeting_to_timeslot_on_save, sender=Invite)
         
         return invite
 
@@ -161,13 +161,13 @@ class TestBooking(TestCase):
 
 
     def test_fill_bookings(self):
-        invite1 = MeetingRequest(
+        invite1 = Invite(
             fkevent=self.e,
             inviter=self.important_user,
             invitee=self.test_user,
         )
 
-        invite2 = MeetingRequest(
+        invite2 = Invite(
             fkevent=self.e,
             inviter=self.user1,
             invitee=self.user2,

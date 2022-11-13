@@ -1,5 +1,5 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
 
 
@@ -18,21 +18,15 @@ class Event(models.Model):
     meeting_duration_mins = models.PositiveIntegerField()
     meeting_time_slots = models.PositiveIntegerField()
     meeting_concurrencies = models.PositiveIntegerField()
-    registered_users = models.ManyToManyField(User, blank=True)
+    registered_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company = models.CharField(max_length=30)
-    event_participations = models.ManyToManyField(Event)
-
-
-class MeetingRequest(models.Model):
+class Invite(models.Model):
     fkevent = models.ForeignKey(Event, on_delete=models.CASCADE)
     inviter = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="invitations_sent")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invites_sent")
     invitee = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="invites_received")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invites_received")
     creation_date = models.DateTimeField(default=timezone.now)
     acknowledge_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
@@ -40,10 +34,10 @@ class MeetingRequest(models.Model):
 
     class Meta:
         permissions = (
-            ("view_sent_invitations", "Can view sent invitations"),
-            ("view_received_invitations", "Can view received invitations"),
-            ('send_invitation', "Can send invitation"),
-            ('accept_invitation', "Can accept invitation")
+            ("view_sent_invites", "Can view sent invites"),
+            ("view_received_invites", "Can view received invites"),
+            ('send_invite', "Can send invites"),
+            ('accept_invite', "Can accept invites")
         )
         constraints = [
             models.UniqueConstraint(
@@ -56,7 +50,7 @@ class Booking(models.Model):
     time_slot = models.PositiveIntegerField()
     concurrency = models.PositiveIntegerField()
     booked_meeting = models.OneToOneField(
-        MeetingRequest, on_delete=models.SET_NULL, null=True)
+        Invite, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         constraints = [

@@ -2,25 +2,23 @@
 
 from django.db import migrations
 from django.contrib.auth.models import Permission
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 
 
 def add_default_groups(apps, schema_editor):
     attendee_group, created = Group.objects.get_or_create(name="Attendees")
 
     attendee_group.permissions.add(
-        Permission.objects.get(name="Can view sent invitations"))
+        Permission.objects.get(name="Can view sent invites"))
     attendee_group.permissions.add(
-        Permission.objects.get(name="Can view received invitations"))
+        Permission.objects.get(name="Can view received invites"))
     attendee_group.permissions.add(
-        Permission.objects.get(name="Can send invitation"))
+        Permission.objects.get(name="Can send invites"))
     attendee_group.permissions.add(
-        Permission.objects.get(name="Can accept invitation"))
+        Permission.objects.get(name="Can accept invites"))
 
     attendee_group.permissions.add(
         Permission.objects.get(name="Can view event"))
-    attendee_group.permissions.add(
-        Permission.objects.get(name="Can view user profile"))
 
 
 def remove_default_groups(apps, schema_editor):

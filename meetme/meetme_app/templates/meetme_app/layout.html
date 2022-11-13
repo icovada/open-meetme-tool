@@ -1,4 +1,5 @@
 {% load static %}
+{% load account %}
 <!doctype html>
 <html lang="en">
 
@@ -34,7 +35,7 @@
         </ul>
         <ul class="navbar-nav mx-end">
           {% if user.is_authenticated %}
-          <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">{{user}}</button>
+          <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">{% user_display user %}</button>
           <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static">
             <li><a class="dropdown-item" href="/profile">My profile</a></li>
             <li><hr class="dropdown-divider"></hr></li>

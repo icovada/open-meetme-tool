@@ -3,6 +3,7 @@ from django import forms
 
 BOOTSTRAP5_TEXT_CLASS = 'form-control'
 
+# Personal note: https://builtwithdjango.com/blog/styling-authentication-pages
 class BSSignupForm(SignupForm):
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)

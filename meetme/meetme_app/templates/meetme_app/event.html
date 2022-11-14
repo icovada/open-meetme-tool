@@ -16,7 +16,7 @@
             {% if v.meeting is None %}
               <div class="py-3 calendar-meeting text-muted">No meetings</div>
             {% else %}
-              <div class="calendar-meeting booked">
+              <div class="calendar-meeting booked align-self-center">
                 <p class="fw-bold">{{v.meeting.inviter}} - {{v.meeting.invitee}}</p>
                 <p>Room {{v.meeting.booking.concurrency}}</p>
               </div>

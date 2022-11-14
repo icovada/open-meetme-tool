@@ -21,10 +21,12 @@ body {
 }
 
 .calendar-meeting.booked{
-  border: 3px solid #8c00ff !important;
+  /* border: 3px solid #8c00ff !important; */
+  border-left: 1em solid purple;
   border-radius: 3px;
   background-color: #b04fff;
   color: white;
+  padding: 3px;
   padding-left: 1em;
 }
 

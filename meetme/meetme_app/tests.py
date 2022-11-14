@@ -3,7 +3,7 @@ from datetime import datetime
 from django import setup
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+from accounts.models import CustomUser as User
 from django.db.models import signals
 
 from .models import Event, Invite, Booking, InvitationStatus

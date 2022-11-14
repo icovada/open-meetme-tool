@@ -35,7 +35,7 @@ def event_view(request, slug):
 
     user_booking_dict = {}
     
-    for x in request.user.invitations_sent.filter(booking__isnull=False):
+    for x in request.user.invites_sent.filter(booking__isnull=False):
         user_booking_dict[x.booking.time_slot] = x
     
     for x in request.user.invites_received.filter(booking__isnull=False):
